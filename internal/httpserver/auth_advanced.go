@@ -285,13 +285,14 @@ func (handler *authHandler) RequestPasswordReset(responseWriter http.ResponseWri
 		handler.internalError(responseWriter, request, err)
 		return
 	}
+	neutralResetMessage := "If an account exists for that email, Bear Mail will send a reset link shortly."
 	if !found {
 		handler.logAuthenticationEvent(request, "password_reset_request", map[string]any{
 			"email":         email,
 			"success":       false,
 			"failureReason": "email not found",
 		})
-		if err := handler.renderPasswordResetRequest(responseWriter, http.StatusNotFound, false, "No account exists for that email.", ""); err != nil {
+		if err := handler.renderPasswordResetRequest(responseWriter, http.StatusOK, false, neutralResetMessage, ""); err != nil {
 			handler.internalError(responseWriter, request, err)
 		}
 		return
@@ -311,9 +312,9 @@ func (handler *authHandler) RequestPasswordReset(responseWriter http.ResponseWri
 		"userId":     user.ID,
 		"success":    true,
 		"resetToken": resetToken.Value,
-		"resetLink":  resetLink,
+		"resetLink":  "resetLink",
 	})
-	if err := handler.renderPasswordResetRequest(responseWriter, http.StatusOK, true, "", "/password-reset/"+resetToken.Value); err != nil {
+	if err := handler.renderPasswordResetRequest(responseWriter, http.StatusOK, true, "", neutralResetMessage); err != nil {
 		handler.internalError(responseWriter, request, err)
 	}
 }
