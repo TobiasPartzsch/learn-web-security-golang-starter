@@ -107,6 +107,7 @@ func contentSecurityPolicy(next http.Handler) http.Handler {
 			),
 		)
 		responseWriter.Header().Set("X-Frame-Options", "SAMEORIGIN")
+		responseWriter.Header().Set("Referrer-Policy", "strict-origin-when-cross-origin")
 		next.ServeHTTP(responseWriter, request)
 	})
 }
